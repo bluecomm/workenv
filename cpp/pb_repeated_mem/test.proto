@@ -1,0 +1,29 @@
+
+message InnerMsg_64B {
+    optional uint64 u64_1 = 1 [default = 256];
+    optional uint64 u64_2 = 2 [default = 256];
+    optional uint64 u64_3 = 3 [default = 256];
+    optional uint64 u64_4 = 4 [default = 256];
+    optional uint64 u64_5 = 5 [default = 256];
+    optional uint64 u64_6 = 6 [default = 256];
+    optional uint64 u64_7 = 7 [default = 256];
+    optional uint64 u64_8 = 8 [default = 256];
+}
+
+message InnerMsg_256B {
+    required InnerMsg_64B in_64b_1 = 1;
+    required InnerMsg_64B in_64b_2 = 2;
+    required InnerMsg_64B in_64b_3 = 3;
+    required InnerMsg_64B in_64b_4 = 4;
+}
+
+message InnerMsg_1KB {
+    required InnerMsg_256B in_256_1 = 1;
+    required InnerMsg_256B in_256_2 = 2;
+    required InnerMsg_256B in_256_3 = 3;
+    required InnerMsg_256B in_256_4 = 4;
+}
+
+message OuterMsg {
+    repeated InnerMsg_1KB in_1kb = 1;
+}

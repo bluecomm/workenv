@@ -1,0 +1,100 @@
+####################################################
+# Generic makefile - 万能Makefile
+# for compiling and linking C++ projects on Linux 
+# Author: George Foot  Modified:Jackie Lee
+####################################################
+### Customising
+#
+# Adjust the following if necessary; EXECUTABLE is the target
+# executable's filename, and LIBS is a list of libraries to link in
+# (e.g. alleg, stdcx, iostr, etc). You can override these on make's
+# command line of course, if you prefer to do it that way.
+#
+#
+# 可执行文件名
+EXECUTABLE := main
+# 静态库目录
+LIBDIR:=   
+# 静态库文件名           
+LIBS :=    
+# 头文件目录           
+INCLUDES:=h   
+# 除了当前目录外，其他的源代码文件目录      
+#SRCDIR:=sub1 sub2
+SRCDIRS := sub1 sub2 .
+#源文件扩展名
+SRCEXTS:=.c         
+#
+# # Now alter any implicit rules' variables if you like, e.g.:
+
+CC := gcc
+CFLAGS := -g -Wall
+CPPFLAGS := $(CFLAGS)
+CPPFLAGS += $(addprefix -I,$(INCLUDES))
+CPPFLAGS += -MMD
+
+#
+# # The next bit checks to see whether rm is in your djgpp bin
+# # directory; if not it uses del instead, but this can cause (harmless)
+# # `File not found' error messages. If you are not using DOS at all,
+# # set the variable to something which will unquestioningly remove
+# # files.
+#
+#删除命令
+RM-F := rm -f
+
+# # You shouldn't need to change anything below this point.
+#
+
+#包含所有指定目录下的源文件（只包含指定的目录，所以SRCDIRS需要包含当前目录）
+#SRCS := $(wildcard $(addsuffix /*.c, $(SRCDIRS)))
+#包含所有指定目录下的源文件（包含指定的目录和当前目录，所以SRCDIRS不能包含当前目录）
+#SRCS := $(wildcard *.c) $(wildcard $(addsuffix /*.c, $(SRCDIRS)))
+#产生所有源文件: 只包含指定的目录
+SRCS := $(foreach d,$(SRCDIRS),$(wildcard $(d)/*.c))
+#产生所有源文件: 只包含指定的目录
+#SRCS = $(foreach d,$(SRCDIRS),$(wildcard $(addprefix $(d)/*,.c)))
+#??????????????????????????????????????????????
+#SRCS = $(foreach d,$(SRCDIRS),$(wildcard $(addprefix $(d)/*,$(SRCEXTS))))  
+
+OBJS := $(patsubst %.c,%.o,$(SRCS))
+DEPS := $(patsubst %.o,%.d,$(OBJS))
+MISSING_DEPS := $(filter-out $(wildcard $(DEPS)),$(DEPS))
+MISSING_DEPS_SOURCES := $(wildcard $(patsubst %.d,%.c,$(MISSING_DEPS)))
+
+.PHONY : all deps objs clean veryclean rebuild info
+
+all: $(EXECUTABLE)
+
+deps : $(DEPS)
+
+objs : $(OBJS)
+
+clean :
+	@$(RM-F) *.o
+	@$(RM-F) *.d
+	@$(RM-F) $(OBJS)
+	@$(RM-F) $(DEPS)
+	
+veryclean: clean
+	@$(RM-F) $(EXECUTABLE)
+
+rebuild: veryclean all
+ifneq ($(MISSING_DEPS),)
+$(MISSING_DEPS) :
+	@$(RM-F) $(patsubst %.d,%.o,$@)
+endif
+
+-include $(DEPS)
+
+$(EXECUTABLE) : $(OBJS)
+#	$(CC) -o $(EXECUTABLE) $(OBJS) $(addprefix -L,$(LIBDIR)) $(addprefix -l,$(LIBS))
+	$(CC) -o $(EXECUTABLE) $(OBJS)
+
+info:
+	@echo $(SRCDIRS)
+	@echo $(SRCS)
+	@echo $(OBJS)
+	@echo $(DEPS)
+	@echo $(MISSING_DEPS)
+	@echo $(MISSING_DEPS_SOURCES)

@@ -1,0 +1,80 @@
+###############################################################################
+#多目录：通用Makefile模板
+###############################################################################
+
+#实现的功能：
+#•make——编译和连接程序 
+#•make objs——编译程序，生成目标文件 
+#•make clean——清除编译产生的目标文件（*.o）和依赖文件（*.d） 
+#•make cleanall——清除目标文件（*.o）、依赖文件（*.d）和可执行文件（*.exe） 
+#•make rebuild——重新编译连接程序，相当于make clean && make
+#Usage： 
+# Gneric C/C++ Makefile  
+####################################################   
+PROGRAM := main
+SRCDIRS := sub1 sub2 .
+SRCEXTS := .c
+INCL := -Ih
+
+CPPFLAGS :=  
+
+CFLAGS :=  
+CFLAGS +=  
+
+CXXFLAGS :=  
+CXXFLAGS +=
+
+LDFLAGS :=  
+LDFLAGS +=  
+
+RM := -rm -f
+CC := gcc
+CXX := g++
+
+SHELL = /bin/sh  
+SOURCES = $(foreach d,$(SRCDIRS),$(wildcard $(addprefix $(d)/*,$(SRCEXTS))))  
+OBJS = $(foreach x,$(SRCEXTS),$(patsubst %$(x),%.o,$(filter %$(x),$(SOURCES))))  
+DEPS = $(patsubst %.o,%.d,$(OBJS))
+
+.PHONY: all objs clean cleanall rebuild
+
+all : $(PROGRAM)
+
+
+$(PROGRAM) : $(OBJS)  
+ifeq ($(strip $(SRCEXTS)),.c)  
+	$(CC) -o $(PROGRAM) $(INCL) $(OBJS) $(LDFLAGS)  
+else  
+	$(CXX) -o $(PROGRAM) $(INCL) $(OBJS) $(LDFLAGS)  
+endif 
+
+
+objs : $(OBJS)
+
+%.o : %.c  
+	$(CC) $(INCL) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+#%.o : %.cpp  
+#	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) -c $< $@
+
+
+#%.d : %.c  
+#	@$(CC) -MM -MD $(CFLAGS)# {1}lt;   
+#%.d : %.C  
+#	@$(CC) -MM -MD $(CXXFLAGS)# {1}lt;
+
+#不要使用 -MD选项
+%.d: %.c
+	@set -e; rm -f $@; \
+	$(CC) $(INCL) -MM $(CFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+	
+-include $(DEPS)
+
+rebuild: clean call
+
+clean:  
+	@$(RM) $(OBJS) $(DEPS)
+cleanall: clean  
+	@$(RM) $(PROGRAM)
+

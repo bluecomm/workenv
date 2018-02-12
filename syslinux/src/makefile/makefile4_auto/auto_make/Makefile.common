@@ -1,0 +1,16 @@
+COMMON_INCLUDE	= $(top_srcdir)/h/common
+SUB1_INCLUDE = $(top_srcdir)/h/sub1
+SUB2_INCLUDE = $(top_srcdir)/h/sub2
+SUB3_INCLUDE = $(top_srcdir)/h/sub3
+
+STD_DEFINES_AND_INCLUDES = \
+			   -I$(COMMON_INCLUDE) \
+			   -I$(SUB1_INCLUDE) \
+			   -I$(SUB2_INCLUDE) \
+			   -I$(SUB3_INCLUDE)
+			   
+AM_CFLAGS = -Wall -g -Werror $(STD_DEFINES_AND_INCLUDES)
+
+SUB1_LA = $(top_srcdir)/src/sub1/libsub1.la
+SUB2_LA = $(top_srcdir)/src/sub2/libsub2.la
+SUB3_LA = $(top_srcdir)/src/sub3/libsub3.la

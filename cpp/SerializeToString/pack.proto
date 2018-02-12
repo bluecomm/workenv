@@ -1,0 +1,8 @@
+message NewStyle {
+    optional uint32 mt = 1;
+    optional bytes json = 3;
+}
+
+message NewStyleRepeated {
+    repeated NewStyle new_styles = 1;
+}

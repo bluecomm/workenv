@@ -1,0 +1,2 @@
+gcc -I/usr/local/include -lsctp -c err.c  serv.c
+gcc -I/usr/local/include -lsctp -o serv serv.o err.o

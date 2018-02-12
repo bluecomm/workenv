@@ -1,0 +1,47 @@
+#Makefile通用模板CC=gcc
+CFLAGS=-Wall
+# .d文件和.o文件保存路径
+OBJPATH=obj
+# 最终可执行文件
+TARGET=main
+
+CC = gcc
+
+default:$(TARGET)
+
+SRCDIRS = . sub1 sub2
+INCDIRS = h
+
+SOURCES=$(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.c))
+INCLUDE=$(addprefix -I,$(INCDIRS))
+
+# 获取.d文件名集合
+DEPS=$(addprefix $(OBJPATH)/, $(patsubst %.c, %.d, $(filter %.c, $(SOURCES))))
+# 获取.o文件名集合
+OBJS=$(addprefix $(OBJPATH)/, $(addsuffix .o, $(basename $(SOURCES))))
+
+-include $(DEPS)
+
+# 生成.d文件
+#$(OBJPATH)/%.d: %.c
+#	$(CC) $(INCLUDE) -MM $< | sed "1s|^|$(dir $@)|" |" \
+#	sed "1{x;s|.*|$@: $<|;G;}" > $(basename $@).d
+ $(OBJPATH)/%.d: %.c
+	$(CC) $(INCLUDE) $(DEPENDFLAG) $(CFLAGS) $< |\
+	sed "s?\\(.*\\):?$(basename $<).o $(basename $<).d :?g" \
+	> $@ || $(RM) $@
+
+# 生成.o文件
+ $(OBJPATH)/%.o: %.c
+	$(CC) $(INCLUDE) $(CFLAGS) -DDEBUG -Wall -g -o $@ -c $<
+
+# 链接成可执行文件
+$(TARGET):$(OBJS)
+	$(CC) $(INCLUDE) $(CFLAGS) -o $@ $(OBJS)
+
+# 清理
+clean:
+	-rm -f $(OBJS) $(TARGET) $(DEPS)
+	
+info:
+	@echo 'OBJS: ' $(OBJS)
