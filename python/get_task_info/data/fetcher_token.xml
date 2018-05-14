@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="gbk"?>
+<tasks>
+  <task id="7296585806673608705" group="FetcherTokenGroup" creation_time="1524768127174362" owner="fetcher.18395.0@gzhxy-se-tm0024.gzhxy.baidu.com" eta="1524852000" value_type="sp.worker.FetcherToken"><![CDATA[name: "REBATE-Daily"
+mode: FTP_FETCHER
+source {
+  template_source: "ftp://olap_ftp:106453@10.26.3.253/home/work/var/sfcharge/charge_log/YYYYmmdd/rebate.sf.day.YYYYmmdd.log"
+  day_pattern: "YYYYmmdd"
+  min_pattern: "HHMM"
+  cycle: 86400
+  delay: 93600
+  alarm: 108000
+  rate: 15
+  prefix: "rebate"
+  postfix: "log"
+}
+state {
+  start: 1524758400
+  interval: 60
+  lease: 100
+  do_verify: true
+  last_owner: "fetcher.18395.0@gzhxy-se-tm0024.gzhxy.baidu.com"
+  last_source: "ftp://olap_ftp:106453@10.26.3.253/home/work/var/sfcharge/charge_log/20180426/rebate.sf.day.20180426.log"
+  last_count: 1
+  last_size: 4762477
+  last_time: 1524768127
+}
+slice_config {
+  input_path: "/tm/nfs_data/report_cluster/rebate_slicer"
+  output_path: "/tm/nfs_data/report_cluster/rebate_slicer"
+  output_tasks_groups: "TaskRebate4UpdaterGroup"
+  output_tasks_groups: "RouterTaskRebate4UpdaterGroup"
+  output_tasks_groups: "TaskDataSource4ArchiverGroup_FCRebate"
+  output_tasks_groups: "TaskRebateNormal4EdatUpdaterGroup"
+  output_tasks_groups: "RouterTaskRebateNormal4EdatUpdaterGroup"
+  bundler_token_group: "OLAPBundlerTokenGroup"
+  bundle_maxline: 30000
+  bundle_timeout: 60
+  log_type: LOG_TEXT
+  output_log_type: LOG_TEXT
+  compress_type: CPRS_NONE
+}
+]]></task>
+  <task id="7296585806748057601" group="FetcherTokenGroup" creation_time="1524768198242214" owner="fetcher.37888.0@gzhxy-im-search-m22-xi3-385.gzhxy.baidu.com" eta="1524852000" value_type="sp.worker.FetcherToken"><![CDATA[name: "SF-IGN-Daily"
+mode: SINGLE_HDFS_FILE_FETCHER
+source {
+  template_source: "/app/dt/minos/3148/textlog/SHIFEN/dr_dorado_dsfcharge_sf_ign_anti_on_day/70022444/YYYYmmdd/HHMM/tc-sf-drd21.tc.baidu.com/dcharge.sf_ign.day.YYYYmmdd.log"
+  day_pattern: "YYYYmmdd"
+  min_pattern: "HHMM"
+  cycle: 86400
+  delay: 93600
+  alarm: 108000
+  rate: 15
+  prefix: "dcharge.sf_ign.day"
+  postfix: "log"
+  eta: 120
+}
+state {
+  start: 1524758400
+  interval: 60
+  lease: 100
+  do_verify: true
+  last_owner: "fetcher.37888.0@gzhxy-im-search-m22-xi3-385.gzhxy.baidu.com"
+  last_source: "/app/dt/minos/3148/textlog/SHIFEN/dr_dorado_dsfcharge_sf_ign_anti_on_day/70022444/20180426/0000/tc-sf-drd21.tc.baidu.com/dcharge.sf_ign.day.20180426.log"
+  last_count: 1
+  last_size: 55771453
+  last_time: 1524768198
+}
+slice_config {
+  input_path: "/tm/nfs_data/report_cluster/sf_ign_slicer"
+  output_path: "/tm/nfs_data/report_cluster/sf_ign_slicer"
+  output_tasks_groups: "TaskSFIgn4UpdaterGroup"
+  output_tasks_groups: "RouterTaskSFIgn4UpdaterGroup"
+  output_tasks_groups: "TaskZTCIgn4UpdaterGroup"
+  output_tasks_groups: "RouterTaskZTCIgn4UpdaterGroup"
+  output_tasks_groups: "TaskDataSource4ArchiverGroup_SFIgn"
+  output_tasks_groups: "TaskIgnPaySFClick4EdatZtcCpaUpdaterGroup"
+  output_tasks_groups: "RouterTaskIgnPaySFClick4EdatZtcCpaUpdaterGroup"
+  output_tasks_groups: "TaskIgnPaySFClick4KenanZtcCpaUpdaterGroup"
+  bundler_token_group: "OLAPBundlerTokenGroup"
+  bundle_maxline: 30000
+  bundle_timeout: 60
+  log_type: LOG_TEXT
+  output_log_type: LOG_TEXT
+  compress_type: CPRS_NONE
+}
+extra_config_file: "/tm/nfs_data/report_cluster/hadoop/hadoop-site.xml.nmg.khan.impl"
+]]></task>
+  <task id="7296585819328872450" group="FetcherTokenGroup" creation_time="1524780196964106" owner="fetcher.10057.0@gzhxy-se-tm0026.gzhxy.baidu.com" eta="1524866400" value_type="sp.worker.FetcherToken"><![CDATA[name: "FC-LXBCall"
+mode: DIRECT_HDFS_FETCHER
+source {
+  template_source: "/app/ecom/holmes/shift/midout/one_stop_final_lxb/YYYYmmdd/HHMM/@ready"
+  day_pattern: "YYYYmmdd"
+  min_pattern: "HHMM"
+  cycle: 86400
+  delay: 108000
+  alarm: 468000
+  rate: 15
+  prefix: "part"
+  eta: 120
+  sub_directory: "data"
+}
+state {
+  start: 1524758400
+  interval: 60
+  lease: 100
+  do_verify: true
+  last_owner: "fetcher.10057.0@gzhxy-se-tm0026.gzhxy.baidu.com"
+  last_source: "/app/ecom/holmes/shift/midout/one_stop_final_lxb/20180426/0000/@ready"
+  last_count: 100
+  last_size: 5029146
+  last_time: 1524780196
+}
+slice_config {
+  input_path: "/tm/nfs_data/report_cluster/LXB_Call"
+  output_path: "/tm/nfs_data/report_cluster/LXB_Call"
+  output_tasks_groups: "TaskLXBCall4UpdaterGroup"
+  output_tasks_groups: "TaskDataSource4ArchiverGroup_LXBCall"
+  bundler_token_group: "OLAPBundlerTokenGroup"
+  bundle_maxline: 30000
+  bundle_timeout: 60
+  log_type: LOG_TEXT
+  output_log_type: LOG_TEXT
+  compress_type: CPRS_NONE
+}
+extra_config_file: "/tm/nfs_data/report_cluster/hadoop/hadoop-site.xml.nmg.khan.impl"
+contacts: "pm_xiaaixuan,rd_zhouzhenyu"
+]]></task>
+  <task id="7296585819404369921" group="FetcherTokenGroup" creation_time="1524780268352549" owner="fetcher.1205.0@gzhxy-se-tm0152.gzhxy.baidu.com" eta="1524866400" value_type="sp.worker.FetcherToken"><![CDATA[name: "FC-Bridge"
+mode: DIRECT_HDFS_FETCHER
+source {
+  template_source: "/app/ecom/holmes/shift/midout/one_stop_final_bridge/YYYYmmdd/HHMM/@ready"
+  day_pattern: "YYYYmmdd"
+  min_pattern: "HHMM"
+  cycle: 86400
+  delay: 108000
+  alarm: 468000
+  rate: 15
+  prefix: "part"
+  eta: 120
+  sub_directory: "data"
+}
+state {
+  start: 1524758400
+  interval: 60
+  lease: 100
+  do_verify: true
+  last_owner: "fetcher.1205.0@gzhxy-se-tm0152.gzhxy.baidu.com"
+  last_source: "/app/ecom/holmes/shift/midout/one_stop_final_bridge/20180426/0000/@ready"
+  last_count: 100
+  last_size: 120303972
+  last_time: 1524780268
+}
+slice_config {
+  input_path: "/tm/nfs_data/report_cluster/bridge"
+  output_path: "/tm/nfs_data/report_cluster/bridge"
+  output_tasks_groups: "TaskBridge4UpdaterGroup"
+  output_tasks_groups: "TaskDataSource4ArchiverGroup_Bridge"
+  bundler_token_group: "OLAPBundlerTokenGroup"
+  bundle_maxline: 30000
+  bundle_timeout: 60
+  log_type: LOG_TEXT
+  output_log_type: LOG_TEXT
+  compress_type: CPRS_NONE
+}
+extra_config_file: "/tm/nfs_data/report_cluster/hadoop/hadoop-site.xml.nmg.khan.impl"
+contacts: "pm_xiaaixuan,rd_zhouzhenyu"
+]]></task>
+  <task id="7296585836236111873" group="FetcherTokenGroup" creation_time="1524796260842599" owner="fetcher.24486.0@gzhxy-se-tm0027.gzhxy.baidu.com" eta="1524796920" update_count="1" value_type="sp.worker.FetcherToken"><![CDATA[name: "REBATE-QuarterHourly"
+mode: FTP_FETCHER
+source {
+  template_source: "ftp://olap_ftp:106453@10.26.3.253/home/work/var/sfcharge/charge_log/YYYYmmdd/rebate.sf.YYYYmmdd-HHMM.log"
+  day_pattern: "YYYYmmdd"
+  min_pattern: "HHMM"
+  cycle: 900
+  delay: 1800
+  alarm: 10800
+  rate: 15
+  prefix: "rebate"
+  postfix: "log"
+}
+state {
+  start: 1524794400
+  interval: 60
+  lease: 100
+  do_verify: true
+  last_owner: "fetcher.10057.0@gzhxy-se-tm0026.gzhxy.baidu.com"
+  last_source: "ftp://olap_ftp:106453@10.26.3.253/home/work/var/sfcharge/charge_log/20180427/rebate.sf.20180427-0945.log"
+  last_count: 1
+  last_size: 2085511
+  last_time: 1524795363
+}
+slice_config {
+  input_path: "/tm/nfs_data/report_cluster/rebate_slicer"
+  output_path: "/tm/nfs_data/report_cluster/rebate_slicer"
+  output_tasks_groups: "TaskRebate4UpdaterGroup"
+  output_tasks_groups: "RouterTaskRebate4UpdaterGroup"
+  output_tasks_groups: "TaskDataSource4ArchiverGroup_FCRebate"
+  output_tasks_groups: "TaskRebateNormal4EdatUpdaterGroup"
+  output_tasks_groups: "RouterTaskRebateNormal4EdatUpdaterGroup"
+  bundler_token_group: "OLAPBundlerTokenGroup"
+  bundle_maxline: 30000
+  bundle_timeout: 60
+  log_type: LOG_TEXT
+  output_log_type: LOG_TEXT
+  compress_type: CPRS_NONE
+}
+]]></task>
+  <task id="7296585836179488769" group="FetcherTokenGroup" creation_time="1524796266302591" owner="fetcher.46025.0@gzhxy-im-search-m22-xi3-382.gzhxy.baidu.com" eta="1524796326" value_type="sp.worker.FetcherToken"><![CDATA[name: "ROI-Data"
+mode: DIRECT_HDFS_FETCHER
+source {
+  template_source: "/app/ecom/fcr-model/liufeng19/roi_task/ocpc/daily_report_new/YYYYmmdd/@menifest"
+  day_pattern: "YYYYmmdd"
+  min_pattern: "HHMM"
+  cycle: 86400
+  delay: 122400
+  alarm: 3600000
+  rate: 15
+  prefix: "part"
+  eta: 120
+}
+state {
+  start: 1522598400
+  interval: 60
+  lease: 100
+  do_verify: true
+  last_owner: "fetcher.2189.0@gzhxy-se-tm0080.gzhxy.baidu.com"
+  last_source: "/app/ecom/fcr-model/liufeng19/roi_task/ocpc/daily_report_new/20180401/@menifest"
+  last_count: 10
+  last_size: 7966408
+  last_time: 1522634471
+}
+slice_config {
+  input_path: "/tm/nfs_data/report_cluster/ROIData"
+  output_path: "/tm/nfs_data/report_cluster/ROIData"
+  output_tasks_groups: "TaskROIData4UpdaterGroup"
+  bundler_token_group: "OLAPBundlerTokenGroup"
+  bundle_maxline: 30000
+  bundle_timeout: 60
+  log_type: LOG_TEXT
+  output_log_type: LOG_TEXT
+  compress_type: CPRS_NONE
+}
+extra_config_file: "/tm/nfs_data/report_cluster/hadoop/hadoop-site.xml.nmg.mulan"
+]]></task>
+  <task id="7296585836204654593" group="FetcherTokenGroup" creation_time="1524796290821766" owner="fetcher.46025.0@gzhxy-im-search-m22-xi3-382.gzhxy.baidu.com" eta="1524796350" value_type="sp.worker.FetcherToken"><![CDATA[name: "Slp-PageVisitorSummary"
+mode: DIRECT_HDFS_FETCHER
+source {
+  template_source: "/app/ecom/fcr/slp/daily_statistics/slp_page_visitor_summary/YYYYmmdd/@manifest"
+  day_pattern: "YYYYmmdd"
+  min_pattern: "HHMM"
+  cycle: 86400
+  delay: 129600
+  alarm: 900000
+  rate: 15
+  eta: 120
+}
+state {
+  start: 1524585600
+  interval: 60
+  lease: 100
+  do_verify: false
+  last_owner: "fetcher.37888.0@gzhxy-im-search-m22-xi3-385.gzhxy.baidu.com"
+  last_source: "/app/ecom/fcr/slp/daily_statistics/slp_page_visitor_summary/20180424/@manifest"
+  last_count: 2
+  last_size: 4272948
+  last_time: 1524709816
+}
+slice_config {
+  input_path: "/tm/nfs_data/report_cluster/slp_slicer"
+  output_path: "/tm/nfs_data/report_cluster/slp_slicer"
+  output_tasks_groups: "TaskSLPVisitorSummary4UpdaterGroup"
+  bundler_token_group: "NULL_OLAPBundlerTokenGroup"
+  bundle_maxline: 30000
+  bundle_timeout: 60
+  log_type: LOG_TEXT
+  output_log_type: LOG_TEXT
+  compress_type: CPRS_NONE
+  do_slice: false
+}
+extra_config_file: "/tm/nfs_data/report_cluster/hadoop/hadoop-site.xml.nmg.khan.impl"
+contacts: "rd_shenhan"
+]]></task>
+  <task id="7296585836215140355" group="FetcherTokenGroup" creation_time="1524796300620980" owner="fetcher.21564.0@gzhxy-se-tm0025.gzhxy.baidu.com" eta="1524796480" value_type="sp.worker.FetcherToken"><![CDATA[name: "Native-Charge-Quarterly"
+mode: FTP_FETCHER
+source {
+  template_source: "ftp://olap_ftp:106453@10.26.3.253/home/work/var/native_chg/YYYYmmdd/result.native.YYYYmmdd-HHMM.log"
+  day_pattern: "YYYYmmdd"
+  min_pattern: "HHMM"
+  cycle: 900
+  delay: 1000
+  alarm: 3600
+  rate: 50
+  prefix: "result.native"
+  postfix: "log"
+  eta: 9
+}
+state {
+  start: 1524795300
+  interval: 180
+  lease: 60
+  do_verify: true
+  last_owner: "fetcher.24486.0@gzhxy-se-tm0027.gzhxy.baidu.com"
+  last_source: "ftp://olap_ftp:106453@10.26.3.253/home/work/var/native_chg/20180427/result.native.20180427-1000.log"
+  last_count: 1
+  last_size: 597277507
+  last_time: 1524795808
+}
+slice_config {
+  input_path: "/tm/nfs_data/report_cluster/pay_slicer"
+  output_path: "/tm/nfs_data/report_cluster/pay_slicer"
+  output_tasks_groups: "TaskNativeCharge4UpdaterGroup"
+  output_tasks_groups: "TaskDataSource4ArchiverGroup_NativeCharge"
+  output_tasks_groups: "TaskNativePaySFClick4EdatUpdaterGroup"
+  output_tasks_groups: "RouterTaskNativePaySFClick4EdatUpdaterGroup"
+  bundler_token_group: "OLAPBundlerTokenGroup"
+  bundle_maxline: 30000
+  bundle_timeout: 60
+  log_type: LOG_TEXT
+  output_log_type: LOG_TEXT
+  compress_type: CPRS_NONE
+}
+]]></task>
+  <task id="7296585836218286081" group="FetcherTokenGroup" creation_time="1524796303122357" owner="fetcher.11998.0@gzhxy-im-search-m22-xi3-274.gzhxy.baidu.com" eta="1524796363" value_type="sp.worker.FetcherToken"><![CDATA[name: "SF-IGN-QuarterHourly"
+mode: SINGLE_HDFS_FILE_FETCHER
+source {
+  template_source: "/log/30840/dr_dorado_dsfcharge_sf_ign_anti_on/YYYYmmdd/HHMM/tc-sf-drd21.tc.baidu.com/dcharge.sf_ign.YYYYmmdd-HHMM.log"
+  day_pattern: "YYYYmmdd"
+  min_pattern: "HHMM"
+  cycle: 900
+  delay: 1800
+  alarm: 86400
+  rate: 15
+  prefix: "dcharge.sf_ign"
+  postfix: "log"
+  eta: 120
+}
+state {
+  start: 1524793500
+  interval: 60
+  lease: 100
+  do_verify: true
+  last_owner: "fetcher.15201.0@gzhxy-se-tm0044.gzhxy.baidu.com"
+  last_source: "/log/30840/dr_dorado_dsfcharge_sf_ign_anti_on/20180427/0930/tc-sf-drd21.tc.baidu.com/dcharge.sf_ign.20180427-0930.log"
+  last_count: 1
+  last_size: 393268346
+  last_time: 1524795461
+}
+slice_config {
+  input_path: "/tm/nfs_data/report_cluster/sf_ign_slicer"
+  output_path: "/tm/nfs_data/report_cluster/sf_ign_slicer"
+  output_tasks_groups: "TaskSFIgn4UpdaterGroup"
+  output_tasks_groups: "RouterTaskSFIgn4UpdaterGroup"
+  output_tasks_groups: "TaskZTCIgn4UpdaterGroup"
+  output_tasks_groups: "RouterTaskZTCIgn4UpdaterGroup"
+  output_tasks_groups: "TaskDataSource4ArchiverGroup_SFIgn"
+  output_tasks_groups: "TaskIgnPaySFClick4EdatZtcCpaUpdaterGroup"
+  output_tasks_groups: "RouterTaskIgnPaySFClick4EdatZtcCpaUpdaterGroup"
+  output_tasks_groups: "TaskIgnPaySFClick4KenanZtcCpaUpdaterGroup"
+  bundler_token_group: "OLAPBundlerTokenGroup"
+  bundle_maxline: 30000
+  bundle_timeout: 60
+  log_type: LOG_TEXT
+  output_log_type: LOG_TEXT
+  compress_type: CPRS_NONE
+}
+extra_config_file: "/tm/nfs_data/report_cluster/hadoop/hadoop-site.xml.nmg.khan.impl"
+]]></task>
+  <task id="7296585836229820419" group="FetcherTokenGroup" creation_time="1524796314178303" owner="fetcher.46025.0@gzhxy-im-search-m22-xi3-382.gzhxy.baidu.com" eta="1524796374" value_type="sp.worker.FetcherToken"><![CDATA[name: "Slp-PageVisitorDetail"
+mode: DIRECT_HDFS_FETCHER
+source {
+  template_source: "/app/ecom/fcr/slp/daily_statistics/slp_page_visitor_detail/YYYYmmdd/@manifest"
+  day_pattern: "YYYYmmdd"
+  min_pattern: "HHMM"
+  cycle: 86400
+  delay: 129600
+  alarm: 900000
+  rate: 15
+  eta: 120
+}
+state {
+  start: 1524585600
+  interval: 60
+  lease: 100
+  do_verify: false
+  last_owner: "fetcher.10057.0@gzhxy-se-tm0026.gzhxy.baidu.com"
+  last_source: "/app/ecom/fcr/slp/daily_statistics/slp_page_visitor_detail/20180424/@manifest"
+  last_count: 2
+  last_size: 16673553
+  last_time: 1524709921
+}
+slice_config {
+  input_path: "/tm/nfs_data/report_cluster/slp_slicer"
+  output_path: "/tm/nfs_data/report_cluster/slp_slicer"
+  output_tasks_groups: "TaskSLPVisitorDetail4UpdaterGroup"
+  bundler_token_group: "NULL_OLAPBundlerTokenGroup"
+  bundle_maxline: 30000
+  bundle_timeout: 60
+  log_type: LOG_TEXT
+  output_log_type: LOG_TEXT
+  compress_type: CPRS_NONE
+  do_slice: false
+}
+extra_config_file: "/tm/nfs_data/report_cluster/hadoop/hadoop-site.xml.nmg.khan.impl"
+contacts: "rd_shenhan"
+]]></task>
+  <task id="7296585836234014721" group="FetcherTokenGroup" creation_time="1524796318456591" owner="fetcher.24486.0@gzhxy-se-tm0027.gzhxy.baidu.com" eta="1524796324" value_type="sp.worker.FetcherToken"><![CDATA[name: "ZTCROIDetail"
+mode: DIRECT_HDFS_FETCHER
+source {
+  template_source: "/app/dt/minos/3159/textlog/FENGCHAO/ztc_report_stats/70023735/YYYYmmdd/HHMM/@manifest"
+  day_pattern: "YYYYmmdd"
+  min_pattern: "HHMM"
+  cycle: 900
+  delay: 900
+  alarm: 86400
+  rate: 15
+  prefix: "report_stat"
+  eta: 120
+}
+state {
+  start: 1524795300
+  interval: 6
+  lease: 100
+  do_verify: false
+  last_owner: "fetcher.1205.0@gzhxy-se-tm0152.gzhxy.baidu.com"
+  last_source: "/app/dt/minos/3159/textlog/FENGCHAO/ztc_report_stats/70023735/20180427/1000/@manifest"
+  last_count: 4
+  last_size: 198936
+  last_time: 1524795536
+}
+slice_config {
+  input_path: "/tm/nfs_data/report_cluster/ztc_detail_slicer"
+  output_path: "/tm/nfs_data/report_cluster/ztc_detail_slicer"
+  output_tasks_groups: "TaskZTCROIDetail4UpdaterGroup"
+  bundler_token_group: "NULL_OLAPBundlerTokenGroup"
+  bundle_maxline: 30000
+  bundle_timeout: 60
+  log_type: LOG_TEXT
+  output_log_type: LOG_TEXT
+  compress_type: CPRS_NONE
+  do_slice: false
+}
+extra_config_file: "/tm/nfs_data/report_cluster/hadoop/hadoop-site.xml.nmg.khan.impl"
+]]></task>
+</tasks>

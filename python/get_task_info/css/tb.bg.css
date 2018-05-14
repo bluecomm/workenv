@@ -1,0 +1,32 @@
+body {
+font: normal 15px auto "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+color: #4f6b72;
+background: #E6EAE9;
+}
+
+table{
+     border-collapse: collapse;/* ±߿ò¢ÊÐ  */
+}
+
+a {
+color: #c75f3e;
+}
+
+#mytable {
+width: 700px;
+padding: 0;
+margin: 0;
+}
+
+caption {
+padding: 0 0 5px 0;
+width: 900px;
+font: italic 15px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+text-align: right;
+}
+
+html>body td{ font-size:15px;}
+body,td,th {
+font-family: ËÌ, Arial;
+font-size: 12px;
+}
