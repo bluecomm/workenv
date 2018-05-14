@@ -1,23 +1,23 @@
-# ----- init -----
+# ----- config -----
+## ----- init -----
 git init
 git clone <url>
 git config --global user.name "xxx"
 git config --global user.email "xxx@xxx.com"
 
-#----- modify and commit -----
+## ----- alias -----
+git config --global --add alias.st status
+git config --global --add alias.co checkout
+git config --global --add alias.br branch
+
+## ----- remember password when push github -----
+git config --global credential.helper store
+
+# ----- modify and commit -----
 git add
 git add -u
 git commit
 git push origin HEAD:refs/for/master
-
-# discasrd a local commit
-git fetch origin master
-git reset --soft origin/master
-
-# cherry-pick changes to branch
-git checkout updater_1-0-178_BRANCH
-git cherry-pick 508bd350553ca53616d3b879c4da1aec7c5cf819
-git push origin HEAD:refs/for/updater_1-0-178_BRANCH
 
 # ----- log -----
 git log
@@ -29,13 +29,31 @@ git reflog
 git log dev..master #查看master有但dev没有的提交
 git log dev...master # 查看master或dev的提交
 
-# ----- undo -----
+# ----- diff -----
+git diff
+git diff commit1 commit2
+git diff --stat  # simple diff result(only changed filename)
+
+# ----- cherry-pick changes to branch -----
+git checkout dev
+git cherry-pick 508bd350553ca53616d3b879c4da1aec7c5cf819
+
+# ----- discasrd local change / undo -----
+git fetch origin master
+git reset --soft origin/master
+git reset --hard origin/master
 git checkout -- <file>
 git checkout HEAD <file>
 git reset --soft origin/master
 git reset --hard origin/master
 git revert <commit>
 git cherry-pick <commit>
+
+# ----- branch -----
+## ----- delete branch/tag -----
+git push origin --delete <branchName>
+git push origin :<branchName>
+git push origin --delete tag <tagname>
 
 # ----- git work-flow -----
 git checkout work
@@ -49,9 +67,6 @@ git rebase master
 git checkout master
 git merge work
 git push
-
-# ----- remember password when push github -----
-git config --global credential.helper store
 
 # ----- set git color -----
 git config --global color.ui true
