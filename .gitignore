@@ -1,4 +1,7 @@
 *.o
 a.out
 *.db
+*.pyc
+*.pb.cc
+*.pb.h
 logs/
