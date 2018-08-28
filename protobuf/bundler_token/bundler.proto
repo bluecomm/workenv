@@ -1,0 +1,156 @@
+// proto definition for bundler
+
+enum CompressType {
+    CPRS_NONE = 0;
+    CPRS_GZIP = 1;
+    CPRS_ZIPPY = 2;
+}
+
+enum SpamType {
+    TYPE_NORMAL = 0;
+    TYPE_SPAM = 1;
+    TYPE_PROTECT = 2; // 日志的最终过滤结果只有normal和spam，protect是一个中间结果
+}
+
+enum InputDeviceType {
+    FILE_SLICE = 0;
+    BIGPIPE = 1;
+    LIGHTPIPE = 2;
+}
+
+enum LogType {
+    LOG_TEXT = 0;
+    LOG_PB = 1;  // b2log格式
+    LOG_BIN = 2; // raw pb，头是head_packet_t格式
+    LOG_SEQ_FILE = 3;  // hdfs sequence file格式
+    LOG_THEMIS = 4; // themis系统的文件格式
+    LOG_TYPE_ERR = 5;  // 用于标记格式错误
+}
+
+message SubProgress {
+    repeated string tag = 1;
+    repeated string log_time = 2;
+}
+
+// Next id to use: 8
+message BigpipeState {
+    optional string pipe_name = 1;
+    optional uint32 pipelet_index = 2;  // the index is 0-based
+    optional uint64 pipelet_serial_number = 3; // Ascendant serial number of Bundle file from the pipelet in all ages.
+    optional uint64 cur_msg_id = 4;     // the msg's index in msg package, 1-based
+    optional uint64 cur_seq_id = 5;     // Where to put the newly-created SplitterTasks, use repeated filed to enable multi-output
+    optional string pipe_token = 6;
+    optional SubProgress sub_progress = 7;
+    optional string pipe_user_name = 8;
+    optional string pipe_password= 9;
+}
+
+// Next id to use: 8
+message LightpipeState {
+    optional string source = 1;
+    optional string ip_port = 2;
+    optional string sub_layer = 3;
+    optional int64 start_timestamp = 4;
+    optional int64 start_offset = 5;
+    optional int64 start_seq_id = 6;
+    optional SubProgress sub_progress = 7;
+}
+
+// Next id to use: 9
+message FileSliceState {
+    optional string file_list_name = 1;     //文件列表的名字
+    optional uint32 file_count = 2;     //文件列表中文件数(用于校验)
+    optional string last_file_name = 3;     //上次做到的文件名(用于failover)
+    optional int64 last_file_offset = 4 [default = 0];    //上次做到文件的offset(用于failover)
+    optional uint32 route_index = 5;    // token的index
+    optional uint64 route_serial_number = 6;  // 这个token上打的第几个包 
+    optional int32 file_time = 7;    //文件列表中文件的起始时间
+    optional uint32 fetcher_time = 8 [default = 0];
+}
+
+// Next id to use: 21 
+message BundlerToken {
+    optional InputDeviceType input_device_type = 1 [default = BIGPIPE];
+    optional BigpipeState bigpipe_state = 2;
+    optional FileSliceState file_slice_state = 3;
+    optional string output_path = 4;
+    repeated string output_task_groups = 5;
+    optional bool enable_userkey = 6 [default = false];
+    optional uint32 bundle_maxline = 7; // Bundle文件大小限制 (用日志条数来表示)
+    optional uint32 bundle_timeout = 8;
+    optional int32 commit_period = 10 [default = -1];  //每轮sleep时间，用于控制commit速度，-1为不限制
+    optional int64 max_record_num_per_round = 11 [default = -1];  //每轮最多读取的条数,-1为不限制
+    optional LogType log_type = 12;  //输入日志类型
+    optional string output_task_value = 13 [default = "BundleTaskValue"]; //输出task的value类型
+    optional CompressType compress_type = 14 [default = CPRS_NONE]; //输出bundler文件压缩类型
+    optional bool enable_progress = 15 [default = true]; //是否解析日志时间并在token中记录订阅进度
+    optional string work_conf_path = 16 [default = "./conf"];
+    optional string work_conf_name = 17 [default = "work.conf"]; 
+    optional LogType output_log_type = 18[default = LOG_TEXT];
+
+    // 是否备份slice token，默认为 是
+    // 若是，则将完成的token转移到对应的 done group 中，不删除输入文件 (当前行为)
+    // 若否，需要 回收filelist中的文件 和 filelist本身，并删除token
+    optional bool backup_slice_token = 19 [default = true];
+
+    // bundler是否处于流控状态 默认为 否
+    optional bool in_flow_control = 20 [default = false];
+    optional LightpipeState lightpipe_state = 21;
+}
+
+// describe how the bundle is bundled
+// Next id to use: 4
+message SourceId {
+    // Next id to use: 5
+    message BigpipeSource {
+        optional string pipe_name = 1;
+        optional uint32 pipelet_index = 2; // pipelet index
+        optional uint64 pipelet_serial_number = 3;
+        optional string tag = 4; // machine name
+    }
+    // Next id to use: 5
+    message FileSliceSource {
+        optional string slice_file_name = 1; // sliced file’s name
+        optional int64 slice_file_begin_offset = 2; // slice begin offset
+        optional uint64 slice_file_length = 3; // slice file’s length
+        optional uint64 source_file_length = 4; // source file's length
+    }
+    optional InputDeviceType input_device_type = 1 [default = BIGPIPE];
+    optional BigpipeSource bigpipe_source = 2; 
+    optional FileSliceSource file_slice_source = 3;
+}
+
+
+// Next id to use: 8
+message EventId {
+    required uint32 ip_address = 1;
+    required uint32 process_id = 2;
+    required int32 time = 3;
+    required uint32 serial_id = 4;
+    optional uint32 route_index = 5; // pipelet index
+    optional uint64 route_serial_number = 6;
+    optional uint32 partition_idx = 7 [default = 0];  // Partitioner打散eventid，用于避免Partitioner输出，输入到反作弊，bundleid相同的问题
+    optional string route_name = 8;  // 功能类似pipelet index，兼容多种route格式
+    optional uint64 inc_idx = 9;     // inc_idx for flow_mirror
+}
+
+// 统一的基于Bundle文件的TaskValue描述
+// Next id to use: 13
+message BundleTask {
+    required EventId bundle_id = 1;
+    required int32 record_num = 2;
+    required string file_path = 3;
+    required string file_name = 4;
+    required int32 offset = 5;
+    required int32 chunk_size = 6; // Real bundle file is [offset, offset + chunk_size) in file_path/file_name
+    required int32 reference_count = 7;
+    required int32 fail_count = 8;
+    optional SourceId source_id = 9;
+    optional int32 start_time = 10;
+    optional int32 time_span = 11;
+    optional LogType log_type = 12;
+    optional CompressType compress_type = 13;
+    optional int64 uncompress_chunk_size = 14; // 如果文件被压缩，表示压缩前的大小, 否则没有意义
+
+    extensions 100 to 199;
+}
