@@ -1,0 +1,6 @@
+message TestProto {
+    optional string str1 = 1;
+    optional string str2 = 2;
+    optional string str3 = 3;
+    optional string str4 = 4;
+}

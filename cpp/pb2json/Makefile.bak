@@ -1,0 +1,26 @@
+BINPROG=a.out
+CPP_FLAGS := -lm -lrt -lpthread -lprotobuf -g -Wall -std=c++11
+#CPP_FLAGS := -lm -lrt -lpthread -lprotobuf -g -Wall
+
+all : $BINPROG
+
+$BINPROG : main.o pack.pb.o pb2json.o
+	g++ $(CPP_FLAGS) -o a.out main.o pack.pb.o pb2json.o
+
+main.o : main.cpp pack.pb.h
+	g++ $(CPP_FLAGS) -c main.cpp
+
+pb2json.o : pb2json.cpp pb2json.h json.hpp
+	g++ $(CPP_FLAGS) -c pb2json.cpp
+
+pack.pb.o : pack.pb.cc pack.pb.h
+	g++ $(CPP_FLAGS) -c pack.pb.cc
+
+pack.pb.cc pack.pb.h: pack.proto
+	protoc -I=./ --cpp_out=./ pack.proto
+
+clean :
+	rm -rf a.out
+	rm -rf *.o
+	rm -rf *.pb.cc
+	rm -rf *.pb.h

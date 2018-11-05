@@ -35,9 +35,14 @@ int main() {
 
     integer2string(12345, out_str);
     std::cout << out_str << std::endl;
-    
+
     string2integer2("a1234567a", num);
     std::cout << num << std::endl;
+
+    ss.clear();
+    ss.str("");
+    ss << 1 << "a" << 2 << "b";
+    std::cout << std::endl << ss.str() << std::endl;
 
     return 0;
 }

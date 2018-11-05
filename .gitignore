@@ -4,4 +4,5 @@ a.out
 *.pyc
 *.pb.cc
 *.pb.h
+*.swp
 logs/

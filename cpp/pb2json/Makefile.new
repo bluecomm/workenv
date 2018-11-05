@@ -1,0 +1,63 @@
+CC=g++
+CFLAGS=-Wall -Werror -g -lprotobuf -std=c++11
+LD=g++
+LDFLAGS= $(LIBS)
+DEPENDFLAG=-MM
+LIBS=
+
+CFLAGS:=$(CFLAGS) $(INCL)
+LDFLAGS:=$(LDFLAGS) $(LIBS)
+
+RMRF=-rm -f
+SRCDIRS=.
+INCDIRS=.
+PROGRAMS=a.out
+
+###############################################################
+SRCS_CPP=$(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.cpp))
+SRCS_CC=$(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.pb.cc))
+
+INCL=$(addprefix -I,$(INCDIRS))
+
+OBJS_CPP=$(SRCS_CPP:.cpp=.o)
+OBJS_CC=$(SRCS_CC:.pb.cc=.pb.o)
+OBJS=$(OBJS_CPP) $(OBJS_CC)
+
+DEPENDS_CPP=$(SRCS:.cpp=.d)
+DEPENDS_CC=$(SRCS:.pb.cc=.d)
+
+all:$(PROGRAMS)
+
+$(PROGRAMS):$(OBJS)
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $(filter %.o ,$+)
+
+%.d:%.cpp
+	$(CC) $(DEPENDFLAG) $(CFLAGS) $< |\
+	sed "s?\\(.*\\):?$(basename $<).o $(basename $<).d :?g" \
+	> $@ || $(RM) $@
+
+%.pb.d:%.pb.cc
+	$(CC) $(DEPENDFLAG) $(CFLAGS) $< |\
+	sed "s?\\(.*\\):?$(basename $<).o $(basename $<).d :?g" \
+	> $@ || $(RM) $@
+
+%.o:%.cpp
+	$(CC) $(INCL) $(CFLAGS) -DDEBUG -o $@ -c $<
+-include $(DEPENDS_CPP)
+
+%.pb.o:%.pb.cc
+	$(CC) $(INCL) $(CFLAGS) -DDEBUG -o $@ -c $<
+-include $(DEPENDS_CC)
+
+%.pb.cc %.pb.h:%.proto
+	protoc -I=./ --cpp_out=./ *.proto
+
+clean:
+	$(RMRF) $(OBJS) $(DEPENDS_CPP) $(DEPENDS_CC) $(PROGRAMS) *.pb.cc *.pb.h
+
+info:
+	@echo 'OBJS_CPP: ' $(OBJS_CPP)
+	@echo 'OBJS_CC: ' $(OBJS_CC)
+	@echo 'OBJS: ' $(OBJS)
+	@echo 'SRCS_CPP: ' $(SRCS_CPP)
+	@echo 'SRCS_CC: ' $(SRCS_CC)

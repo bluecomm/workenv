@@ -33,6 +33,7 @@ git log dev...master # 查看master或dev的提交
 git diff
 git diff commit1 commit2
 git diff --stat  # simple diff result(only changed filename)
+git show <commit-id> # show diff of this commit
 
 # ----- cherry-pick changes to branch -----
 git checkout dev
@@ -52,20 +53,31 @@ git cherry-pick <commit>
 # ----- branch -----
 ## ----- delete branch/tag -----
 git push origin --delete <branchName>
-git push origin :<branchName>
+git push origin:<branchName>
+
+# ----- tag -----
+git ls-remote --tags origin
+git tag
+git tag <tagname>
+git tag -l 
+git tag -d <tagname>
+git tag -a -m "comment for tag"
+git tag -a <commitid>
+git push origin --tags
+git push origin <tagname>
 git push origin --delete tag <tagname>
 
 # ----- git work-flow -----
-git checkout work
+git checkout master
+git pull origin master
+git checkout -b <my branch name>
 ...
 git add -u
 git commit
 git checkout master
-git pull
-git checkout work
-git rebase master
-git checkout master
-git merge work
+git pull origin master
+git checkout <my branch name>
+git rebase -i master
 git push
 
 # ----- set git color -----

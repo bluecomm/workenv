@@ -1,0 +1,208 @@
+<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<title>章节页</title>
+<meta name="description" content="" />
+<link rel="stylesheet" type="text/css" href="/moban/read.css" />
+<script src="https://hm.baidu.com/hm.js?92aba3e4f105050c3554fc4ac3120577"></script><script type="text/javascript" src="/moban/read.js"></script>
+<script type="text/javascript" src="https://libs.baidu.com/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript">
+function get_paras(paras){ 
+	var url = location.href;
+	var paraString = url.substring(url.indexOf("#")+1,url.length).split("&amp;");
+	var paraObj = {}
+	for (i=0; j=paraString[i]; i++){
+		paraObj[j.substring(0,j.indexOf("=")).toLowerCase()] = j.substring(j.indexOf("=")+1,j.length);
+	}
+	var returnValue = paraObj[paras.toLowerCase()];
+	if(typeof(returnValue)=="undefined"){
+		return "";
+	}else{
+		return returnValue;
+	}
+}
+
+
+//取正文
+function get_content(){
+	//取正文的url地址
+	xid=Math.floor(bookid/1000)
+	var url_get_data='https://www.va-etong.com/files/article/html444/'+xid+'/'+bookid+'/'+chapterid+'.html';
+	
+	var url_get_text=url_get_data;
+	$.ajax({
+		type: "GET",
+		url: url_get_text,
+		success: function(msg){
+			//console.log('ajax返回后执行:'+url_get_text)
+			//console.log(msg)
+			//数据更新到页面
+			$("#txt").html(msg);
+		}
+	});
+}
+
+
+
+function go_page_from_id(mybookid,bookid,chapterid){
+	url_next='/chapter.html?1';
+	url=location.href;
+	if(url.indexOf("chapter.html?1")&gt;-1){url_next='/chapter.html?2';}
+	if(url.indexOf("chapter.html?2")&gt;-1){url_next='/chapter.html?1';}
+	url_next=url_next+'#mybookid='+mybookid+'&amp;bookid='+bookid+'&amp;chapterid='+chapterid;
+	//console.log(url_next);
+	window.location.href=url_next
+	// window.location.replace(url_next);
+	return false;
+}
+
+
+var pre_id=0;
+var next_id=0;
+
+function get_next_chapter(){
+	//修改这里时间控制缓存
+	var control=60*5;
+	xid=Math.floor(mybookid/1000)
+	$.ajaxSetup({ cache: true });
+	$.ajax({
+		type: "GET",
+		url: "/files/"+xid+"/"+mybookid+"/"+mybookid+".json?"+'cdnversions='+String(Math.ceil(new Date()/(1000*control))),//取目录数据
+		success: function(msg){
+			// console.log('ajax返回后执行:')
+			// console.log(msg.info.articlename)
+			// console.log(msg.list.length)
+			
+			pre_item=false;
+			next_item=false;
+			$(".bookname").html(msg.info.articlename);
+			
+			
+			//遍历定位
+			for (var i=0;i&lt;msg.list.length;i++){
+				// console.log(chapterid+'::'+msg.list[i].chapterid)
+				if(chapterid==msg.list[i].chapterid){
+					//console.log('当前章节:'+msg.list[i].chaptername)
+					//$("#text").html(msg.list[i].chaptername+'&lt;br /&gt;'+$("#text").html());
+					$(".chaptername").html(msg.list[i].chaptername);
+					lastread.set(mybookid, chapterid, msg.info.articlename, msg.list[i].chaptername, msg.info.author, msg.info.sortid,bookid);
+					id_next_id=i+1
+					if(id_next_id&lt;msg.list.length){
+						next_id=msg.list[id_next_id].chapterid
+						next_item=msg.list[id_next_id]
+					}
+					break;
+				}
+				pre_id=msg.list[i].chapterid
+				pre_item=msg.list[i]
+
+			}
+
+			//console.log('上一章id:'+pre_id);
+			//console.log('下一章id:'+next_id);
+
+			// 设置下一章的链接点击
+			for (i=0; i&lt;$('.url_next').length; i++){//全部的链接对象
+				if(next_id&gt;0){
+					$('.url_next')[i].href="javascript:go_page_from_id("+mybookid+",'"+bookid+"','"+next_id+"');";
+					//$('.url_next')[i].text=next_item.chaptername;
+				}else{
+					//到达最尾章节
+					$('.url_next')[i].href=bookurl;
+					//$('.url_next')[i].text='返回目录页';
+				}
+			}
+
+			// 设置上一章的链接点击
+			for (i=0; i&lt;$('.url_pre').length; i++){
+				if(pre_id&gt;0){
+					$('.url_pre')[i].href="javascript:go_page_from_id("+mybookid+",'"+bookid+"','"+pre_id+"');";
+					// console.log(pre_item.chaptername);
+					//$('.url_pre')[i].text=pre_item.chaptername;
+				}else{
+					$('.url_pre')[i].href=bookurl;
+					//$('.url_pre')[i].text='返回目录页';
+				}
+
+
+			}
+
+		}
+	});
+}
+</script>
+
+<script type="text/javascript">
+function gotoindex(){
+window.location.href=bookurl;
+}
+	
+	bookid=get_paras('bookid');
+	
+	chapterid=get_paras('chapterid');
+	mybookid=get_paras('mybookid');
+	xid=Math.floor(mybookid/1000);
+	bookurl='/xs/'+mybookid+'/';
+	//console.log(chapterid);
+	//console.log(bookid);
+
+</script>
+
+</head>
+<body>
+<div id="chapter">
+	<div class="chapter-wrap">
+		<div class="chapter-nav">
+			<p><a href="/xiaoshuo/">首页</a> &gt; <a href="javascript:gotoindex();" class="bookname">我已爱上你</a> &gt;  章节内容</p>
+			<p class="bookcase"><a href="/bookcase.html">我的书架</a></p>
+		</div>
+	
+		<div class="chapter-box">
+			<div id="chapter-title">
+				<h1 class="chaptername">三十二 wēn水煮青蛙</h1>
+			</div>
+			<div id="txt">    “没什么……”听到赵可儿的声音，陈超突然间冷静了下来 , 自己要的是征服这个职场丽人的身心，现在显然不是时候 , 如果自己强行侵犯赵可儿 , 说不定 , 自己一辈子都得在监狱里度过。<br /><br />    “你等着 , 我去给你拿yào。”赵可儿现在所想的，是尽快的让陈超离开这里，所以丢下这句话以后 , 直接进了卧室，走出来的时候，手里已经多了一个yào箱。<br /><br />    半个小时以后 , 看着陈超离去的背景 , 赵可儿的眼中闪过了一丝复杂 , 毕竟人家救了自己，自己却将人家想成了sè.狼 , 而且 , 自己身上透露.出来的冰冷，一定给人家察觉了，要不然，陈超怎么会在刚刚涂好yào , 就直接要离开呢。<br /><br />    “陈超……”想到这一层 , 赵可儿突然间心中一软 , 冲着陈超道：“留个电.话给我，改天我请你吃饭。”<br /><br />    “要请 , 怕也是我请你吧。”陈超一笑 , 第一步计划已经顺利实施，接下来 , 赵可儿应该逃不过自己的手掌。<br /><br />    在回家的路上 , 钱思思给陈超打了两个电.话，邀请陈超去家里吃饭 , 陈超知道 , 钱思思请自己吃饭是假 , 想要吃自己才是真的 , 所以找了理由拒绝了。<br /><br />    回到家里的时候 , 柳如絮并不在家 , 赵悦的心情显得不错 , 正哼着小曲在厨房里忙碌着 , 身上穿的，正是昨天陈超送给她的那条迷你小吊带。<br /><br />    白晰的tuǐ露在了外面，显得特别的修.长，特别的健康，赵悦虽然已经三十多岁了，不但皮肤没有松驰，而且皮肤也如同婴儿般的妖nèn，真的是个尤物。<br /><br />    陈超一边如是想着，一边站在厨房门口欣赏着赵悦曼妙的身.体。<br /><br />    赵悦能感觉到陈超有sè的目光 , 也很想jǐng告陈超不要这样看自己，但想到昨天晚上陈超在柳如絮身上横冲直撞 , 直将柳如絮shā得溃不成jun的情景，jǐng告的话却怎么也说不出口。<br /><br />    “赵悦 , 今天晚上做什么吃的。”看到赵悦似乎已经xí惯了自己的窥视 , 陈超有些xié.è的开口了。<br /><br />    正在若有所思的赵悦猛的转过头来 , 一脸不可思议的看着陈超：“陈超 , 你刚刚叫我什么。”<br /><br />    “哦，是这样的……”陈超微微一笑：“我觉得，你看起来就是二十多岁的样子 , 老叫你.mā，会把你叫老的，所以想要叫你的名子 , 你不介意吧。”<br /><br />    “你还是叫我mā吧。”赵悦的眼中闪过了一丝jǐng惕 , 显然没有轻易相信陈超的话。<br /><br />    陈超也没有说话 , 而是站在那里和赵悦聊了起来，聊的都是一些那家的妻子背叛了丈夫 , 哪家的丈夫在外面偷吃 , 在这个过程中，陈超一直叫着赵悦的名字。<br /><br />    赵悦一开始还一脸凛然的纠正着陈超，但看到纠正了几次，陈超都不加理会以后 , 有些无奈的接受了这个事实 , 等到赵悦做好了饭的时候 , 陈超叫赵悦的名字，赵悦已经可以坦然接受。<br /><br />    陈超长长的舒了一口气 , 他相信 , 经过这一翻心理战，自己距离再次征服赵悦 , 又迈出了大大的一步。<br /><br />    陈超分析过 , 赵悦本是很享受自己给她的快乐的，但是却一直不再给自己机会 , 最主要的一个原因 , 就是她是柳如絮的māmā。<br /><br />    所以 , 陈超才会提出了叫赵悦名字的要qiú , 其目的 , 就是想要通.过这种潜移默化 , 让赵悦渐渐的忘记这样的观念。<br /><br />    “陈超 , 你说的是真的 , 你们公.司那个叫李jun的，他老婆真的背叛了他。”吃饭的时候，虽然感觉到陈超的目光一直往自己的衣领里钻，但赵悦却仿佛没有看到一样，而是继续着和陈超在厨房没有完成的话题。<br /><br />    “是呀。”陈超点了点头：“他老婆我也认识的，和你一样漂亮，一直都对李jun很好，但是在李jun满足不了他的时候，她为了自己的幸福生活 , 选择了背叛。”<br /><br />    “还为了自己的幸福生活呢，简直就是不检点。”赵悦冷哼了一声。<br /><br />    “你这样说可就不对了。”陈超却摇了摇头：“你想 , 钱思思才二十五六岁的年纪，她还有多少曰子要过 , 难道她这一辈子就浪费在了李jun身上么 , 不 , 那可是几十年呀 , 钱思思知道，那将是自己不堪承受之重，所以选择了背叛 , 我觉得她做得没错。”<br /><br />    “你不要说了，快点吃，我要洗碗了。”赵悦突然间有些烦躁 , 在看到陈超还想说下去的时候 , 直接打断了陈超的话。<br /><br />    陈超没有再说什么 , 而是闷着头吃着饭，吃过饭以后 , 一脸悠然的坐在沙发上看着电视 , 但目光却老是落在了赵悦魔鬼一样的身.体上。<br /><br />    吃过饭以后，赵悦破天荒的没有直接进卧室，而是在陈超的对面坐了下来，和陈超一起看着电视。<br /><br />    陈超觉得这绝对是一个好机会 , 眼角的余光开始在赵悦的身上打量着 , 欣赏着赵悦吊带下曼妙而成熟的身.体。<br /><br />    陈超也不知道赵悦有没有发现自己窥视的目光 , 却看到赵悦的表情变得越来越不自然，一双手抓着裙摆不停的cuō.着 , 但始终没有提及回卧室的事情。<br /><br />    陈超的目光越来越放肆 , 已经钻入了赵悦的裙摆之中，当看到那抹鼓张的粉红sè以后 , 陈超不jìn暗暗咽了一口口水 , 龙柱也有了抬头的现象。<br /><br />    “赵悦，你怎么了。”只是在看到赵悦皱起了眉头以后 , 陈超却心中一惊 , 连忙来到了赵悦的身边。<br /><br />    “没什么 , 累了一天了 , 感觉到背有些酸。”赵悦轻轻捶了捶自己的后背 , 一脸无奈的解释着。<br /><br />    “要不 , 我给你按一下吧。”陈超觉得 , 这对自己来说 , 绝对是一个好机会，一脸期待的看着赵悦。</div>
+		</div>
+		
+		<div class="chapter-control">
+			<a class="url_pre" id="pb_prev" href="javascript:go_page_from_id(33624,'53367','23544245');">上一章</a><span>|</span><a id="pb_mulu" href="javascript:gotoindex();">返回目录</a><span>|</span><a class="url_next" id="pb_next" href="javascript:go_page_from_id(33624,'53367','23544249');">下一章</a>
+		</div>
+</div>
+
+<script type="text/javascript">
+&lt;!--
+function jumpPage(){
+	var event = document.all ? window.event : arguments[0];
+	if (event.keyCode == 37){
+		if(pre_id==0){
+			document.location = bookurl;
+		}else{
+			go_page_from_id(mybookid,bookid,pre_id);
+		}
+		
+	}
+	if (event.keyCode == 39){
+		if(next_id==0){
+			document.location = bookurl;
+		}else{
+			go_page_from_id(mybookid,bookid,next_id);
+		}
+		
+	}
+	//回车
+	if (event.keyCode == 13){
+	 	document.location = bookurl;
+	}
+}
+document.onkeydown=jumpPage;
+--&gt;
+</script>
+
+<script type="text/javascript">
+get_content();
+get_next_chapter();
+</script>
+<div style="display:none;"><script>tongji();</script></div>
+
+</div></body></html>

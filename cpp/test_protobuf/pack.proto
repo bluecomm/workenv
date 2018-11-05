@@ -1,0 +1,5 @@
+message NewStyle {
+    optional uint32 planid = 1;
+    optional uint64 unitid = 2;
+    optional uint32 cmatch = 3 [default = 0];
+}
