@@ -1,0 +1,15 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+[blue@5c8b10342d26 base641]$ make
+g++ -lprotobuf  -Wall -Werror -g -o a.out base64.o main.o pair.pb.o
+main.o: In function `make_pb_string(std::vector<std::pair<int, int>, std::allocator<std::pair<int, int> > > const&)':
+/home/blue/workenv/cpp/base641/main.cpp:51: undefined reference to `google::protobuf::MessageLite::SerializeToString(std::string*) const'
+pair.pb.o:(.rodata._ZTV8CvtPairs[_ZTV8CvtPairs]+0x20): undefined reference to `google::protobuf::Message::GetTypeName() const'
+pair.pb.o:(.rodata._ZTV8CvtPairs[_ZTV8CvtPairs]+0x48): undefined reference to `google::protobuf::Message::InitializationErrorString() const'
+pair.pb.o:(.rodata._ZTV7CvtPair[_ZTV7CvtPair]+0x20): undefined reference to `google::protobuf::Message::GetTypeName() const'
+pair.pb.o:(.rodata._ZTV7CvtPair[_ZTV7CvtPair]+0x48): undefined reference to `google::protobuf::Message::InitializationErrorString() const'
+collect2: error: ld returned 1 exit status
+make: *** [a.out] Error 1
+
+resolved:
+remove -D_GLIBCXX_USE_CXX11_ABI=0
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

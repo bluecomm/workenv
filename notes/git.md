@@ -9,6 +9,21 @@ git config --global user.email "xxx@xxx.com"
 git config --global --add alias.st status
 git config --global --add alias.co checkout
 git config --global --add alias.br branch
+git config --global --add color.ui true
+git config --global --add alias.mpush "push origin HEAD:refs/for/master"
+git config --global --add alias.acommit "commit --amend --no-edit"
+git config --global --list
+"""
+user.email=memo4096@163.com
+user.name=majing
+alias.st=status
+alias.co=checkout
+alias.br=branch
+color.ui=true
+color.branch=true
+color.diff=true
+color.status=true
+"""
 
 ## ----- remember password when push github -----
 git config --global credential.helper store
@@ -17,6 +32,7 @@ git config --global credential.helper store
 git add
 git add -u
 git commit
+commit --amend --no-edit
 git push origin HEAD:refs/for/master
 
 # ----- log -----
