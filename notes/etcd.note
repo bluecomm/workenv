@@ -1,0 +1,6 @@
+yum -y install etcd
+vim /etc/etcd/etcd.conf
+systemctl start etcd
+etcdctl member list
+etcdctl cluster-health
+etcdctl member remove node-name
