@@ -17,7 +17,7 @@ def get_random_int(low=1, hight=10, num=10000):
  
 if __name__ == "__main__":
     now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    print now_time
+    print(now_time)
     low = 1
     hight = 10
     if len(sys.argv) == 2:
@@ -29,5 +29,5 @@ if __name__ == "__main__":
     result = get_random_int(low, hight)
     result_sorted = sorted(result.items(), key = lambda x:x[1], reverse = True)
     for item in result_sorted:
-        print item
+        print(item)
 

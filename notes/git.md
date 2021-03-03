@@ -25,6 +25,9 @@ color.diff=true
 color.status=true
 """
 
+# git gc logs
+git gc  --prune=now
+
 ## ----- remember password when push github -----
 git config --global credential.helper store
 
