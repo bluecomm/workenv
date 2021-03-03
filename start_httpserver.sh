@@ -15,6 +15,9 @@ fi
 
 rm -rf ./log/stat/CGIHTTPServer.pid
 
-nohup python -m CGIHTTPServer $PORT 2>>./logs/dashboard.log 1>&2 &
+# python 2
+# nohup python -m CGIHTTPServer $PORT 2>>./logs/dashboard.log 1>&2 &
+# python 3
+nohup python -m http.server $PORT 2>>./logs/dashboard.log 1>&2 &
 
 echo $! > ./logs/stat/CGIHTTPServer.pid
